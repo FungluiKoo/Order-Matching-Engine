@@ -111,9 +111,13 @@ void OrderBook::execute_stop_order(Order& order, bool is_limit){
     std::cout << "Order qty " << order.get_quantity();
     if (order.get_quantity() > 0){
         if(order.isBuy()){
+            buysem.acquire();
             add_to_orderbook(order, order.get_quote(), buyprices, buypool);
+            buysem.release();
         }else{
+            sellsem.acquire();
             add_to_orderbook(order, order.get_quote(), sellprices, sellpool);
+            sellsem.release();
         }
     }
 }
