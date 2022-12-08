@@ -11,7 +11,7 @@
 class BookBuilder{
 private:
     Message message;
-    OrderBook book;
+    CentralOrderBook centralBook;
     Reader message_reader;
     Writer messageWriter;
     Writer bookWriter;

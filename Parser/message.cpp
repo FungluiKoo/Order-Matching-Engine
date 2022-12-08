@@ -81,6 +81,8 @@ void Message::setMPID(const char& _mpid){
 
 void Message::setTicker(const std::string & _ticker) {
     ticker = _ticker;
+    // remove the whitespaces
+    ticker.erase(std::remove_if(ticker.begin(), ticker.end(), ::isspace),ticker.end());
 }
 
 

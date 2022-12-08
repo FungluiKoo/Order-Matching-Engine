@@ -43,7 +43,7 @@ Message Reader::createMessage(){
 //    std::cout << "key: " << key << "   Pos: "<<  this->file.tellg() << std::endl;
     char ticker[9];
     strncpy(ticker, stock.c_str(), 8); ticker[8] = 0;
-    int debug = 1;
+    int debug = 0;
 
     switch(key){
         uint64_t timeStamp, orderId, oldOrderId, newOrderId;
