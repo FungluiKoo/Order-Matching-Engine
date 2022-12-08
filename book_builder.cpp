@@ -28,11 +28,10 @@ void BookBuilder::start(){
 void BookBuilder::next(){
     message = message_reader.createMessage();
     if(!message.isEmpty()){
-        bool validMessage = updateMessage();
-        if(validMessage){
-//            updateBook();
+//        bool validMessage = updateMessage();
+        updateMessage();
+        updateBook();
 //            WriteBookAndMessage();
-        }
     }
 }
 

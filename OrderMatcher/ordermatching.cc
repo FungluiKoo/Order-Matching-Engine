@@ -2,6 +2,14 @@
 
 #include "orderbook.hh"
 
+template<typename T>
+void vector_pop_front(std::vector<T> &v)
+{
+    if (v.size() > 0) {
+        v.erase(v.begin());
+    }
+}
+
 // private:
 void OrderBook::match_order(Order& order){ // assume limit order
     bool isbuy = order.get_side()==OrderSide::BUY;
@@ -42,7 +50,8 @@ void OrderBook::match_order(Order& order){ // assume limit order
             set_last_matching_price(noworder, level);
             if(noworder.get_quantity()==0){
                 order_map.erase(noworder.get_id());
-                nowlist.pop_front();
+//                nowlist.pop_front();
+                vector_pop_front(nowlist);
                 if(nowlist.empty()){
                     if(isbuy){
                         sellpool.erase(level);

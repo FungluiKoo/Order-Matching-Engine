@@ -35,7 +35,7 @@ unsigned OrderBook::get_sell_market_price() const{ // ?
     and order pool 'pool'
 */
 template<typename Comp>
-StatusCode OrderBook::add_to_orderbook(Order& order, unsigned level, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::list<Order>>& pool){
+StatusCode OrderBook::add_to_orderbook(Order& order, unsigned level, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::vector<Order>>& pool){
     OrderSide side = order.get_side();
     if (pool.find(level) == pool.end()){ //price level not found
             prices.insert(level);
@@ -75,14 +75,14 @@ void OrderBook::execute_stop_orders(){
 */
 template<typename Pred, typename Comp>
 void OrderBook::execute_stop_orders(unsigned stop_price, std::set<unsigned,Comp>& prices,
-                                    std::unordered_map<unsigned, std::list<Order>>& order_pool, Pred p){
+                                    std::unordered_map<unsigned, std::vector<Order>>& order_pool, Pred p){
     //For every stop price satisfying predicate, delete from stop pool and activate it
      for (auto f = prices.begin(); f != prices.end();) {
         //std::cout << "In loop to Executing stop orders at level " << *f <<" stop price " <<stop_price;
         if(!p(*f, stop_price))
             break;
         //std::cout << "Executing stop orders at level " << *f << "\n";
-        std::list<Order> orders = order_pool[*f];
+        std::vector<Order> orders = order_pool[*f];
         f = prices.erase(f);
         order_pool.erase(*f);
         //iterare through all orders at a price level
@@ -165,7 +165,7 @@ std::optional<OrderInfo> OrderBook::get_order_info(unsigned int order_id){
 */
 template<typename Comp>
 void OrderBook::delete_order(unsigned order_id, unsigned price, std::set<unsigned, Comp>& prices, 
-                            std::unordered_map<unsigned, std::list<Order>>& pool){
+                            std::unordered_map<unsigned, std::vector<Order>>& pool){
     for (auto it = pool[price].begin(); it != pool[price].end(); ++it) {
         if(it->get_id() == order_id){
             pool[price].erase(it);
@@ -226,7 +226,7 @@ std::optional<Order> OrderBook::get_order(unsigned int order_id){
     bool isStop = (order_info.type == OrderType::STOP) || (order_info.type == OrderType::STOP_LIMIT);
     unsigned price = order_info.price;
     //Identify relevant pool to fetch order from
-    std::list<Order>& order_list = (isbuy) ? ((isStop)? stop_buy_pool[price] : buypool[price]) : 
+    std::vector<Order>& order_list = (isbuy) ? ((isStop)? stop_buy_pool[price] : buypool[price]) : 
                                             ((isStop)? stop_sell_pool[price] : sellpool[price]);
     for (auto it = order_list.begin(); it != order_list.end(); ++it) {
         if(it->get_id() == order_id){

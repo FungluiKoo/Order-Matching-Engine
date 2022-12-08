@@ -2,7 +2,7 @@
 
 #include <array>
 #include <fstream>
-#include <list>
+//#include <list>
 #include <optional>
 #include <set>
 #include <string>
@@ -38,7 +38,7 @@ class OrderBook{
         std::ofstream ostrm;
 
         // key=price level; value=a list of Order
-        std::unordered_map<unsigned, std::list<Order>> buypool, sellpool, stop_buy_pool, stop_sell_pool; 
+        std::unordered_map<unsigned, std::vector<Order>> buypool, sellpool, stop_buy_pool, stop_sell_pool;
         // stores current levels of the hashmaps (sellpool and stop_buy_pool)
         std::set<unsigned, std::less<unsigned>> sellprices, stop_buy_prices;
         // stores current levels of the hashmaps (buypool and stop_sell_pool)
@@ -51,7 +51,7 @@ class OrderBook{
         void execute_stop_orders();
         
         template<typename Pred, typename Comp>
-        void execute_stop_orders(unsigned, std::set<unsigned, Comp>&, std::unordered_map<unsigned, std::list<Order>>&, Pred);
+        void execute_stop_orders(unsigned, std::set<unsigned, Comp>&, std::unordered_map<unsigned, std::vector<Order>>&, Pred);
         
         void execute_stop_order(Order&, bool);
         void match_order(Order& order);
@@ -60,10 +60,10 @@ class OrderBook{
         std::optional<OrderInfo> get_order_info(unsigned int);
         
         template<typename Comp>
-        StatusCode add_to_orderbook(Order& order, unsigned level, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::list<Order>>& pool);
+        StatusCode add_to_orderbook(Order& order, unsigned level, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::vector<Order>>& pool);
         
         template<typename Comp>
-        void delete_order(unsigned, unsigned, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::list<Order>>& pool);
+        void delete_order(unsigned, unsigned, std::set<unsigned, Comp>& prices, std::unordered_map<unsigned, std::vector<Order>>& pool);
         
         void set_last_matching_price(Order& order, unsigned price);
 
