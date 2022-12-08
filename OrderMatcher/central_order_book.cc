@@ -19,17 +19,18 @@ StatusCode CentralOrderBook::add_symbol(std::string symbol){
 */
 StatusCode CentralOrderBook::add_order(std::string symbol, Order& order){
     StatusCode status;
-    auto order_book_ptr = order_book_map.find(symbol);
-
     // if not found then create an orderbook
-    if (order_book_ptr == order_book_map.end()){
+    if(order_book_map.count(symbol)==0){
 //        status = StatusCode :: SYMBOL_NOT_EXISTS;
-        // std::cout << "symbol not found";
         status = add_symbol(symbol);
-    } else{
-        // std::cout << "symbol found";
-        status = order_book_ptr->second->add_order(order);
+        // std::cout << "symbol created";
     }
+    // auto order_book_ptr = order_book_map.find(symbol);
+    // std::cout << "symbol available";
+    order_book_map[symbol]->lock();
+    status = order_book_map[symbol]->add_order(order);
+    order_book_map[symbol]->unlock();
+    
     if (status == StatusCode::OK)
     {
         order_ticket_map[order.get_id()] = symbol;
@@ -62,11 +63,13 @@ StatusCode CentralOrderBook::delete_order(unsigned int order_id){
     else {
         std::string sym = order_ticket_ptr->second;
         // then go to the order book
-        auto order_book_ptr = order_book_map.find(sym);
-        if (order_book_ptr == order_book_map.end()){
+        // auto order_book_ptr = order_book_map.find(sym);
+        if (order_book_map.count(sym)==0){
             status = StatusCode :: SYMBOL_NOT_EXISTS;
         } else{
-            (order_book_ptr->second)->delete_order(order_id);
+            order_book_map[sym]->lock();
+            order_book_map[sym]->delete_order(order_id);
+            order_book_map[sym]->unlock();
             status = StatusCode :: OK;
         }
     }
