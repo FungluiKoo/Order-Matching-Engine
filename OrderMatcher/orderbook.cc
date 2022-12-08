@@ -111,13 +111,13 @@ void OrderBook::execute_stop_order(Order& order, bool is_limit){
     std::cout << "Order qty " << order.get_quantity();
     if (order.get_quantity() > 0){
         if(order.isBuy()){
-            buysem.acquire();
+            //buysem.acquire();
             add_to_orderbook(order, order.get_quote(), buyprices, buypool);
-            buysem.release();
+            //buysem.release();
         }else{
-            sellsem.acquire();
+            //sellsem.acquire();
             add_to_orderbook(order, order.get_quote(), sellprices, sellpool);
-            sellsem.release();
+            //sellsem.release();
         }
     }
 }
@@ -203,13 +203,13 @@ StatusCode OrderBook::add_order(Order& order){
         if (order.get_quantity() > 0){
             std::cout << "Adding to book" << order;
             if(order.isBuy()){
-                buysem.acquire();
+                //buysem.acquire();
                 add_to_orderbook(order, order.get_quote(), buyprices, buypool);
-                buysem.release();
+                //buysem.release();
             }else{
-                sellsem.acquire();
+                //sellsem.acquire();
                 add_to_orderbook(order, order.get_quote(), sellprices, sellpool);
-                sellsem.release();
+                //sellsem.release();
             }
         }
         execute_stop_orders();  
@@ -259,23 +259,23 @@ StatusCode OrderBook::delete_order(unsigned int order_id){
     bool isStop = (order_info.type == OrderType::STOP) || (order_info.type == OrderType::STOP_LIMIT);
     if(isBuy){
         if(isStop){
-            stopbuysem.acquire();
+            //stop//buysem.acquire();
             delete_order(order_id, order_info.price, stop_buy_prices, stop_buy_pool);
-            stopbuysem.release();
+            //stop//buysem.release();
         }else{
-            buysem.acquire();
+            //buysem.acquire();
             delete_order(order_id, order_info.price, buyprices, buypool);
-            buysem.release();
+            //buysem.release();
         }
     }else{
         if(isStop){
-            stopsellsem.acquire();
+            //stop//sellsem.acquire();
             delete_order(order_id, order_info.price, stop_sell_prices, stop_sell_pool);
-            stopsellsem.release();
+            //stop//sellsem.release();
         }else{
-            sellsem.acquire();
+            //sellsem.acquire();
             delete_order(order_id, order_info.price, sellprices, sellpool);
-            sellsem.release();
+            //sellsem.release();
         }
     }
     return StatusCode :: OK;  

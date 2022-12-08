@@ -38,7 +38,7 @@ class OrderBook{
         std::string company; // also the filename for output
         std::ofstream ostrm;
 
-        std::binary_semaphore buysem{0}, sellsem{0}, stopbuysem{0}, stopsellsem{0};
+        std::binary_semaphore booksem{0};
         // key=price level; value=a list of Order
         std::unordered_map<unsigned, std::list<Order>> buypool, sellpool, stop_buy_pool, stop_sell_pool; 
         // stores current levels of the hashmaps (sellpool and stop_buy_pool)
@@ -74,11 +74,10 @@ class OrderBook{
             company(company),
             ostrm(company, std::ios_base::app)
             {
-                buysem.release();
-                sellsem.release();
-                stopbuysem.release();
-                stopsellsem.release();
+                booksem.release();
             }
+        void lock(){booksem.acquire();}
+        void unlock(){booksem.release();}
         StatusCode add_order(Order&);
         std::optional<Order> get_order(unsigned int);
         StatusCode delete_order(unsigned int);

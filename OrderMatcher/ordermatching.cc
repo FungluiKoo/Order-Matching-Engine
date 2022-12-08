@@ -67,8 +67,8 @@ void OrderBook::match_order(Order& order){ // assume limit order
 void OrderBook::match(Order& order, bool isMarket){
     // Made minor change of passing boolean to prevent repeating same code in multiple places
     auto isbuy = order.get_side()==OrderSide::BUY;
-    if(isbuy){sellsem.acquire();}
-    else{buysem.acquire();}
+    // if(isbuy){sellsem.acquire();}
+    // else{buysem.acquire();}
 
     if(isMarket){
         if(isbuy){
@@ -78,6 +78,6 @@ void OrderBook::match(Order& order, bool isMarket){
         }
     }
     match_order(order);
-    if(isbuy){sellsem.release();}
-    else{buysem.release();}
+    // if(isbuy){sellsem.release();}
+    // else{buysem.release();}
 }
