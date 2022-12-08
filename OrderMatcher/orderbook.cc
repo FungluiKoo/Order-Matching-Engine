@@ -199,9 +199,13 @@ StatusCode OrderBook::add_order(Order& order){
         if (order.get_quantity() > 0){
             std::cout << "Adding to book" << order;
             if(order.isBuy()){
+                buysem.acquire();
                 add_to_orderbook(order, order.get_quote(), buyprices, buypool);
+                buysem.release();
             }else{
+                sellsem.acquire();
                 add_to_orderbook(order, order.get_quote(), sellprices, sellpool);
+                sellsem.release();
             }
         }
         execute_stop_orders();  
@@ -251,15 +255,23 @@ StatusCode OrderBook::delete_order(unsigned int order_id){
     bool isStop = (order_info.type == OrderType::STOP) || (order_info.type == OrderType::STOP_LIMIT);
     if(isBuy){
         if(isStop){
+            stopbuysem.acquire();
             delete_order(order_id, order_info.price, stop_buy_prices, stop_buy_pool);
+            stopbuysem.release();
         }else{
+            buysem.acquire();
             delete_order(order_id, order_info.price, buyprices, buypool);
+            buysem.release();
         }
     }else{
         if(isStop){
+            stopsellsem.acquire();
             delete_order(order_id, order_info.price, stop_sell_prices, stop_sell_pool);
+            stopsellsem.release();
         }else{
+            sellsem.acquire();
             delete_order(order_id, order_info.price, sellprices, sellpool);
+            sellsem.release();
         }
     }
     return StatusCode :: OK;  
