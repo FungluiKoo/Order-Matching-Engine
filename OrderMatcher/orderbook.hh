@@ -5,6 +5,7 @@
 #include <list>
 #include <optional>
 #include <set>
+#include <semaphore>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -37,6 +38,7 @@ class OrderBook{
         std::string company; // also the filename for output
         std::ofstream ostrm;
 
+        std::binary_semaphore buysem{0}, sellsem{0};
         // key=price level; value=a list of Order
         std::unordered_map<unsigned, std::list<Order>> buypool, sellpool, stop_buy_pool, stop_sell_pool; 
         // stores current levels of the hashmaps (sellpool and stop_buy_pool)
@@ -55,7 +57,7 @@ class OrderBook{
         
         void execute_stop_order(Order&, bool);
         void match_order(Order& order);
-        void match_order(Order& order, bool isMarket);
+        void match(Order& order, bool isMarket);
         StatusCode add_stop_order(Order&, bool);
         std::optional<OrderInfo> get_order_info(unsigned int);
         
@@ -71,7 +73,10 @@ class OrderBook{
         OrderBook(std::string company = "MUDD") :
             company(company),
             ostrm(company, std::ios_base::app)
-            {}
+            {
+                buysem.release();
+                sellsem.release();
+            }
         StatusCode add_order(Order&);
         std::optional<Order> get_order(unsigned int);
         StatusCode delete_order(unsigned int);

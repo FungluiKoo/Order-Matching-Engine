@@ -8,7 +8,7 @@ StatusCode CentralOrderBook::add_symbol(std::string symbol){
     if (order_book_map.count(symbol) != 0){
         status = StatusCode :: SYMBOL_EXISTS;
     } else{
-        order_book_map[symbol] = OrderBook();
+        order_book_map[symbol] = std::make_unique<OrderBook>();
         status = StatusCode :: OK;
     }
     return status;
@@ -26,7 +26,7 @@ StatusCode CentralOrderBook::add_order(std::string symbol, Order& order){
         // std::cout << "symbol not found";
     } else{
         // std::cout << "symbol found";
-        status = (order_book_ptr->second).add_order(order);
+        status = order_book_ptr->second->add_order(order);
     }
     return status;
 }
@@ -40,7 +40,7 @@ std::optional<Order> CentralOrderBook::get_order(std::string symbol, unsigned in
     if (order_book_ptr == order_book_map.end()){
         return {};
     }
-    return (order_book_ptr->second).get_order(order_id);
+    return order_book_ptr->second->get_order(order_id);
 }
 
 /*
@@ -52,7 +52,7 @@ StatusCode CentralOrderBook::delete_order(std::string symbol, unsigned int order
     if (order_book_ptr == order_book_map.end()){
         status = StatusCode :: SYMBOL_NOT_EXISTS;
     } else{
-        (order_book_ptr->second).delete_order(order_id);
+        order_book_ptr->second->delete_order(order_id);
         status = StatusCode :: OK;
     }
     return status;
@@ -68,7 +68,7 @@ std::pair<StatusCode, unsigned> CentralOrderBook::best_ask(std::string symbol) c
     if (order_book_ptr == order_book_map.end()){
         status = StatusCode :: SYMBOL_NOT_EXISTS;
     } else{
-        price = (order_book_ptr->second).best_ask();
+        price = order_book_ptr->second->best_ask();
         status = StatusCode :: OK;
     }
     return std::make_pair(status, price);
@@ -84,7 +84,7 @@ std::pair<StatusCode, unsigned> CentralOrderBook::best_bid(std::string symbol) c
     if (order_book_ptr == order_book_map.end()){
         status = StatusCode :: SYMBOL_NOT_EXISTS;
     } else{
-        price = (order_book_ptr->second).best_bid();
+        price = order_book_ptr->second->best_bid();
         status = StatusCode :: OK;
     }
     return std::make_pair(status, price);
@@ -92,5 +92,5 @@ std::pair<StatusCode, unsigned> CentralOrderBook::best_bid(std::string symbol) c
 
 // Print the order book contents - internally used for debugging
 void CentralOrderBook::printBuySellPool(std::string symbol)const{
-    order_book_map.at(symbol).printBuySellPool();
+    order_book_map.at(symbol)->printBuySellPool();
 }

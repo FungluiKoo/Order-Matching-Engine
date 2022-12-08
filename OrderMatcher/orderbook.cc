@@ -1,5 +1,6 @@
-#include "orderbook.hh"
 #include <iterator>
+
+#include "orderbook.hh"
 
 // private methods:
 
@@ -105,7 +106,7 @@ void OrderBook::execute_stop_order(Order& order, bool is_limit){
         order.set_type(OrderType::MARKET);
         order.set_quote(0);
     }
-    match_order(order, !is_limit);
+    match(order, !is_limit);
     std::cout << "Order qty " << order.get_quantity();
     if (order.get_quantity() > 0){
         if(order.isBuy()){
@@ -193,7 +194,7 @@ StatusCode OrderBook::add_order(Order& order){
     StatusCode status = StatusCode :: OK;
     OrderType type = order.get_type();
     if(type == OrderType :: MARKET || type == OrderType :: LIMIT ){
-        match_order(order, type == OrderType::MARKET);
+        match(order, type == OrderType::MARKET);
         if (order.get_quantity() > 0){
             std::cout << "Adding to book" << order;
             if(order.isBuy()){

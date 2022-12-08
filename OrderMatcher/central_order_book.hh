@@ -1,4 +1,5 @@
-#include <unordered_map>
+#include <memory>
+
 #include "orderbook.hh"
 
 /*
@@ -8,9 +9,9 @@
 class CentralOrderBook {
     private:
         // map of stock symbol to it's order book
-        std::unordered_map<std::string, OrderBook> order_book_map;
-    public:
+        std::unordered_map<std::string, std::unique_ptr<OrderBook>> order_book_map;
         
+    public:
         StatusCode add_symbol(std::string);
         
         StatusCode add_order(std::string, Order&);
