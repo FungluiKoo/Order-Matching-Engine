@@ -23,8 +23,7 @@ private:
 
 public:
 
-    Reader(std::string fileName, std::string stock);
-    Reader(std::string _stock);
+    Reader(std::string fileName);
 
     bool isValid() const;
     virtual ~Reader();

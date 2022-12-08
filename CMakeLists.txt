@@ -40,7 +40,6 @@ gtest_discover_tests(orderbook)
 
 # set(CMAKE_CXX_STANDARD 20)
 
-# #add_executable(Order_Matching_Engine main.cpp)
 
 # add_executable(Order_Test order_test.cc order.cc order.hh)
 
@@ -49,3 +48,14 @@ gtest_discover_tests(orderbook)
 #         orderbook.cc orderbook.hh
 #         central_order_book.cc central_order_book.hh
 #         ordermatching.cc)
+
+add_executable(OME main.cpp
+        book_builder.h book_builder.cpp
+        Parser/utils.h Parser/utils.cpp
+        Parser/message.h Parser/message.cpp
+        Parser/reader.h Parser/reader.cpp
+        Parser/writer.h Parser/writer.cpp
+        OrderMatcher/central_order_book.hh OrderMatcher/central_order_book.cc
+        OrderMatcher/order.hh OrderMatcher/order.cc
+        OrderMatcher/orderbook.hh OrderMatcher/orderbook.cc
+        OrderMatcher/ordermatching.cc)

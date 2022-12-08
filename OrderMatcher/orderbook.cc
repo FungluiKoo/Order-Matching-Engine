@@ -75,7 +75,8 @@ void OrderBook::execute_stop_orders(){
     based on predicate 'p'
 */
 template<typename Pred, typename Comp>
-void OrderBook::execute_stop_orders(unsigned stop_price, std::set<unsigned,Comp>& prices,std::unordered_map<unsigned, std::list<Order>>& order_pool, Pred p){
+void OrderBook::execute_stop_orders(unsigned stop_price, std::set<unsigned,Comp>& prices,
+                                    std::unordered_map<unsigned, std::list<Order>>& order_pool, Pred p){
     //For every stop price satisfying predicate, delete from stop pool and activate it
      for (auto f = prices.begin(); f != prices.end();) {
         std::cout << "In loop to Executing stop orders at level " << *f <<" stop price " <<stop_price; 

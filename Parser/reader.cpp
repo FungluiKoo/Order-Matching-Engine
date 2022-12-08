@@ -1,7 +1,7 @@
 #include "reader.h"
 
-Reader::Reader(std::string _fileName, std::string _stock) :
-        fileName(std::move(_fileName)), stock(std::move(_stock)) {
+Reader::Reader(std::string _fileName) :
+        fileName(std::move(_fileName)) {
     file.open(fileName);
     if (!file.is_open()) {
         std::cerr << "The input file: " << fileName << " cannot be open! " << std::endl;
@@ -12,7 +12,6 @@ Reader::Reader(std::string _fileName, std::string _stock) :
     start = time(0);
 }
 
-Reader::Reader(std::string _stock) : stock(std::move(_stock)) {}
 
 void Reader::printProgress(){
     count ++;
@@ -44,7 +43,7 @@ Message Reader::createMessage(){
 //    std::cout << "key: " << key << "   Pos: "<<  this->file.tellg() << std::endl;
     char ticker[9];
     strncpy(ticker, stock.c_str(), 8); ticker[8] = 0;
-
+    int debug = 1;
 
     switch(key){
         uint64_t timeStamp, orderId, oldOrderId, newOrderId;
@@ -106,7 +105,13 @@ Message Reader::createMessage(){
             msg.setId(static_cast<id_type>(orderId));
             msg.setSide(static_cast<side_type>(direction == 'S'));
             msg.setRemSize(static_cast<size_type>(size));
-            msg.setPrice(static_cast<price_type>(price)/10000);
+            msg.setPrice(static_cast<price_type>(price));
+            msg.setTicker(std::string(ticker));
+            if (debug == 1)
+            {
+                std::cout << "ticker:       " << ticker << std::endl;
+                msg.print();
+            }
             break;
         case 'F':
             readBytesIntoMessage(39);
@@ -122,30 +127,20 @@ Message Reader::createMessage(){
             msg.setId(static_cast<id_type>(orderId));
             msg.setSide(static_cast<side_type>(direction == 'S'));
             msg.setRemSize(static_cast<size_type>(size));
-            msg.setPrice(static_cast<price_type>(price)/10000);
+            msg.setPrice(static_cast<price_type>(price));
             msg.setMPID(*mpid);
+            msg.setTicker(std::string(ticker));
+            if (debug == 1)
+            {
+                std::cout << "ticker:       " << ticker << std::endl;
+                msg.print();
+            }
             break;
         case 'E':
             readBytesIntoMessage(30);
-            timeStamp = parse_ts(message+4);
-            orderId = parse_uint64(message+10);
-            execSize = parse_uint32(message+18);
-            msg.setType(key);
-            msg.setTimeStamp(static_cast<time_type>(timeStamp));
-            msg.setId(static_cast<id_type>(orderId));
-            msg.setExecSize(static_cast<size_type>(execSize));
             break;
         case 'C':
             readBytesIntoMessage(35);
-            timeStamp = parse_ts(message+4);
-            orderId = parse_uint64(message+10);
-            execSize = parse_uint32(message+18);
-            price = parse_uint32(message+31);
-            msg.setType(key);
-            msg.setTimeStamp(static_cast<time_type>(timeStamp));
-            msg.setId(static_cast<id_type>(orderId));
-            msg.setExecSize(static_cast<size_type>(execSize));
-            msg.setPrice(static_cast<price_type>(price)/10000);
             break;
         case 'X':
             readBytesIntoMessage(22);
@@ -156,6 +151,8 @@ Message Reader::createMessage(){
             msg.setTimeStamp(static_cast<time_type>(timeStamp));
             msg.setId(static_cast<id_type>(orderId));
             msg.setCancSize(static_cast<size_type>(cancSize));
+            if (debug == 1)
+                msg.print();
             break;
         case 'D':
             readBytesIntoMessage(18);
@@ -164,35 +161,37 @@ Message Reader::createMessage(){
             msg.setType(key);
             msg.setTimeStamp(static_cast<time_type>(timeStamp));
             msg.setId(static_cast<id_type>(orderId));
+            if (debug == 1)
+                msg.print();
             break;
         case 'U':
             readBytesIntoMessage(34);
-            timeStamp = parse_ts(message+4);
-            oldOrderId = parse_uint64(message+10);
-            newOrderId = parse_uint64(message+18);
-            newSize = parse_uint32(message+26);
-            newPrice = parse_uint32(message+30);
-            msg.setType(key);
-            msg.setTimeStamp(static_cast<time_type>(timeStamp));
-            msg.setId(static_cast<id_type>(newOrderId));
-            msg.setOldId(static_cast<id_type>(oldOrderId));
-            msg.setRemSize(static_cast<size_type>(newSize));
-            msg.setPrice(static_cast<price_type>(newPrice)/10000);
+//            timeStamp = parse_ts(message+4);
+//            oldOrderId = parse_uint64(message+10);
+//            newOrderId = parse_uint64(message+18);
+//            newSize = parse_uint32(message+26);
+//            newPrice = parse_uint32(message+30);
+//            msg.setType(key);
+//            msg.setTimeStamp(static_cast<time_type>(timeStamp));
+//            msg.setId(static_cast<id_type>(newOrderId));
+//            msg.setOldId(static_cast<id_type>(oldOrderId));
+//            msg.setRemSize(static_cast<size_type>(newSize));
+//            msg.setPrice(static_cast<price_type>(newPrice));
             break;
         case 'P':
             readBytesIntoMessage(43);
-            timeStamp = parse_ts(message+4);
-            orderId = parse_uint64(message+10);
-            direction = message[18];
-            size = parse_uint32(message+19);
-            strncpy(ticker, message+23, 8); ticker[8] = 0;
-            price = parse_uint32(message+31);
-            msg.setType(key);
-            msg.setTimeStamp(static_cast<time_type>(timeStamp));
-            msg.setId(static_cast<id_type>(orderId));
-            msg.setSide(static_cast<side_type>(direction == 'S'));
-            msg.setExecSize(static_cast<size_type>(size));
-            msg.setPrice(static_cast<price_type>(price)/10000);
+//            timeStamp = parse_ts(message+4);
+//            orderId = parse_uint64(message+10);
+//            direction = message[18];
+//            size = parse_uint32(message+19);
+//            strncpy(ticker, message+23, 8); ticker[8] = 0;
+//            price = parse_uint32(message+31);
+//            msg.setType(key);
+//            msg.setTimeStamp(static_cast<time_type>(timeStamp));
+//            msg.setId(static_cast<id_type>(orderId));
+//            msg.setSide(static_cast<side_type>(direction == 'S'));
+//            msg.setExecSize(static_cast<size_type>(size));
+//            msg.setPrice(static_cast<price_type>(price));
             break;
         case 'Q':
             readBytesIntoMessage(39);
@@ -214,9 +213,9 @@ Message Reader::createMessage(){
             break;
     }
 
-    if (strcmp(ticker, stock.c_str()) != 0) {
-        return {};
-    }
+//    if (strcmp(ticker, stock.c_str()) != 0) {
+//        return {};
+//    }
     return msg;
 }
 

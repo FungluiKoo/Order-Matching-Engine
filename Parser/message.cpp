@@ -31,7 +31,7 @@ void Message::setType(const char& _type){
         type = _type;
     }
     else{
-        std::cerr << "Message with wrong type (" << _type << ") has been found!"<< std::endl;
+        std::cerr << "Message with wrong type (" << _type << ") !"<< std::endl;
     }
 }
 
@@ -78,6 +78,12 @@ void Message::setOldSize(const size_type& _size){
 void Message::setMPID(const char& _mpid){
     strncpy(mpid, &_mpid, 4); mpid[4] = 0;
 }
+
+void Message::setTicker(const std::string & _ticker) {
+    ticker = _ticker;
+}
+
+
 
 // getters
 char Message::getType() const{
@@ -127,6 +133,11 @@ size_type Message::getOldSize()const{
 const char * Message::getMPID()const{
     return mpid;
 }
+
+std::string Message::getTicker() const {
+    return ticker;
+}
+
 
 bool Message::isEmpty()const{
     return (id==ID_DEFAULT);

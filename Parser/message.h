@@ -22,6 +22,7 @@ private:
     price_type oldPrice = PRICE_DEFAULT;
     size_type oldSize = SIZE_DEFAULT;
     char mpid[5] = "";
+    std::string ticker;
 
 public:
     Message() = default;
@@ -53,6 +54,7 @@ public:
     void setOldPrice(const price_type &);
     void setOldSize(const size_type &);
     void setMPID(const char &);
+    void setTicker(const std::string &);
 
     char getType() const;
     id_type getId() const;
@@ -66,6 +68,8 @@ public:
     price_type getOldPrice() const;
     size_type getOldSize() const;
     const char *getMPID() const;
+    std::string getTicker() const;
+
 
     bool isEmpty() const;
 
