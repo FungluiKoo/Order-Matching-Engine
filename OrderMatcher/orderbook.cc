@@ -109,7 +109,7 @@ void OrderBook::execute_stop_order(Order& order, bool is_limit){
     }
     match(order, !is_limit);
     std::cout << "Order qty " << order.get_quantity();
-    if (order.get_quantity() > 0){
+    if (order.get_quantity() > 0  && !order.isAON()){
         if(order.isBuy()){
             //buysem.acquire();
             add_to_orderbook(order, order.get_quote(), buyprices, buypool);
@@ -200,7 +200,7 @@ StatusCode OrderBook::add_order(Order& order){
     OrderType type = order.get_type();
     if(type == OrderType :: MARKET || type == OrderType :: LIMIT ){
         match(order, type == OrderType::MARKET);
-        if (order.get_quantity() > 0){
+        if (order.get_quantity() > 0 && !order.isAON()){
             std::cout << "Adding to book" << order;
             if(order.isBuy()){
                 //buysem.acquire();
