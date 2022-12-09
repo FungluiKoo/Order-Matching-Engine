@@ -8,7 +8,7 @@ StatusCode CentralOrderBook::add_symbol(std::string symbol){
     if (order_book_map.count(symbol) != 0){
         status = StatusCode :: SYMBOL_EXISTS;
     } else{
-        order_book_map[symbol] = std::make_unique<OrderBook>();
+        order_book_map[symbol] = std::make_unique<OrderBook>(symbol);
         status = StatusCode :: OK;
     }
     return status;

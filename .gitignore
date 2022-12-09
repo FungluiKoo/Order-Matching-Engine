@@ -4,4 +4,10 @@
 *.o
 *.out
 build/
-itch/
+data/
+AAPL
+AMZN
+MSFT
+MUDD
+TSLA
+log.txt
