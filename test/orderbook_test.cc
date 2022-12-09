@@ -190,8 +190,8 @@ TEST(OrderBook, DeleteLimitOrder) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, buy1));
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell1));
 
-  EXPECT_EQ(StatusCode::OK, book.delete_order(s, 1));
-  EXPECT_EQ(StatusCode::OK, book.delete_order(s, 3));
+  EXPECT_EQ(StatusCode::OK, book.delete_order(1));
+  EXPECT_EQ(StatusCode::OK, book.delete_order(3));
   
   //order should be deleted
   auto order_obj = book.get_order(s,1);
@@ -212,8 +212,8 @@ TEST(OrderBook, DeleteStopOrder) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, buy1));
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell1));
 
-  EXPECT_EQ(StatusCode::OK, book.delete_order(s, 1));
-  EXPECT_EQ(StatusCode::OK, book.delete_order(s, 3));
+  EXPECT_EQ(StatusCode::OK, book.delete_order(1));
+  EXPECT_EQ(StatusCode::OK, book.delete_order(3));
   
   //order should be deleted
   auto order_obj = book.get_order(s,1);
@@ -226,5 +226,5 @@ TEST(OrderBook, DeleteStopOrder) {
 TEST(OrderBook, DeleteOrderNotExists) {
   CentralOrderBook book;
   std::string s = "APPLE";
-  EXPECT_EQ(StatusCode::SYMBOL_NOT_EXISTS, book.delete_order(s, 1));
+  EXPECT_EQ(StatusCode::SYMBOL_NOT_EXISTS, book.delete_order(1));
 }
