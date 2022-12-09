@@ -53,7 +53,7 @@ StatusCode OrderBook::add_to_orderbook(Order& order, unsigned level, std::set<un
     Execute/Activate all stop orders.
 */
 void OrderBook::execute_stop_orders(){
-    std::cout << "Executing stop orders\n";
+    //std::cout << "Executing stop orders\n";
     //if stop price at a level <= market price, stop order is activated
     auto buy_pred = [](unsigned stop_price, unsigned sell_market_price) {
      return stop_price <= sell_market_price;
@@ -79,10 +79,10 @@ void OrderBook::execute_stop_orders(unsigned stop_price, std::set<unsigned,Comp>
                                     std::unordered_map<unsigned, std::list<Order>>& order_pool, Pred p){
     //For every stop price satisfying predicate, delete from stop pool and activate it
      for (auto f = prices.begin(); f != prices.end();) {
-        std::cout << "In loop to Executing stop orders at level " << *f <<" stop price " <<stop_price; 
+        //std::cout << "In loop to Executing stop orders at level " << *f <<" stop price " <<stop_price;
         if(!p(*f, stop_price))
             break;
-        std::cout << "Executing stop orders at level " << *f << "\n";
+        //std::cout << "Executing stop orders at level " << *f << "\n";
         std::list<Order> orders = order_pool[*f];
         f = prices.erase(f);
         order_pool.erase(*f);
@@ -101,14 +101,14 @@ void OrderBook::execute_stop_orders(unsigned stop_price, std::set<unsigned,Comp>
 void OrderBook::execute_stop_order(Order& order, bool is_limit){
     if(is_limit){
         order.set_type(OrderType::LIMIT);
-        std::cout << "setting to LO \n" << order;
+        //std::cout << "setting to LO \n" << order;
     }else{
         // std::cout << "setting to MO \n" << order;
         order.set_type(OrderType::MARKET);
         order.set_quote(0);
     }
     match(order, !is_limit);
-    std::cout << "Order qty " << order.get_quantity();
+    // std::cout << "Order qty " << order.get_quantity();
     if (order.get_quantity() > 0  && !order.isAON()){
         if(order.isBuy()){
             //buysem.acquire();
@@ -131,19 +131,19 @@ StatusCode OrderBook::add_stop_order(Order& order, bool is_limit){
     unsigned stop_price = order.get_stop_price();
     if(order.isBuy()){
         auto market_price = get_sell_market_price();
-        std::cout << "Buy Stop price = " << market_price;
+        //std::cout << "Buy Stop price = " << market_price;
         can_execute = stop_price <= market_price;
     }else{
         auto market_price = get_buy_market_price();
-        std::cout << "Sell Stop price = " << market_price;
+        //std::cout << "Sell Stop price = " << market_price;
         can_execute = stop_price >= market_price;
     }
     if(can_execute){
-        std::cout << "Can execute stop order now, stop price = " << stop_price;
+        //std::cout << "Can execute stop order now, stop price = " << stop_price;
         //execute stop order fn - set type to MO/LO - if remaining need to add to orderbook
         execute_stop_order(order, is_limit);
     }else{
-        std::cout << "Cannot execute stop order now, adding to orderbook \n";
+        //std::cout << "Cannot execute stop order now, adding to orderbook \n";
         if(order.isBuy()){
             add_to_orderbook(order, stop_price, stop_buy_prices, stop_buy_pool);
         }else{
@@ -191,7 +191,7 @@ void OrderBook::delete_order(unsigned order_id, unsigned price, std::set<unsigne
     Add an order to the order book.
 */
 StatusCode OrderBook::add_order(Order& order){
-    std::cout << "In add order \n" << order;
+   // std::cout << "In add order \n" << order;
     unsigned order_id = order.get_id();
     if(order_map.count(order_id) != 0){
         return StatusCode :: ORDER_EXISTS;
@@ -201,7 +201,7 @@ StatusCode OrderBook::add_order(Order& order){
     if(type == OrderType :: MARKET || type == OrderType :: LIMIT ){
         match(order, type == OrderType::MARKET);
         if (order.get_quantity() > 0 && !order.isAON()){
-            std::cout << "Adding to book" << order;
+            // std::cout << "Adding to book" << order;
             if(order.isBuy()){
                 //buysem.acquire();
                 add_to_orderbook(order, order.get_quote(), buyprices, buypool);

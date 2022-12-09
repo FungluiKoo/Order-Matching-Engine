@@ -19,6 +19,9 @@ private:
     time_t totalTime;
     std::vector<std::string> SymbolFilters =
             { "AAPL", "MSFT", "TSLA", "AMZN"};
+    int totalAdd = 0;
+    int totalDelete = 0;
+    int totalMatch = 0;
 
 public:
     BookBuilder(const std::string &inputMessagePath,

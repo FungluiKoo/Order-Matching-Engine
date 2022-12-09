@@ -68,9 +68,8 @@ StatusCode CentralOrderBook::delete_order(unsigned int order_id){
             status = StatusCode :: SYMBOL_NOT_EXISTS;
         } else{
             order_book_map[sym]->lock();
-            order_book_map[sym]->delete_order(order_id);
+            status = order_book_map[sym]->delete_order(order_id);
             order_book_map[sym]->unlock();
-            status = StatusCode :: OK;
         }
     }
     return status;
