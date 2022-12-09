@@ -59,21 +59,7 @@ void Message::setCancSize(const size_type& _size){
     cancSize = _size;
 }
 
-void Message::setExecSize(const size_type& _size){
-    execSize = _size;
-}
 
-void Message::setOldId(const id_type& _id){
-    oldId = _id;
-}
-
-void Message::setOldPrice(const price_type& _price){
-    oldPrice = _price;
-}
-
-void Message::setOldSize(const size_type& _size){
-    oldSize = _size;
-}
 
 void Message::setMPID(const char& _mpid){
     strncpy(mpid, &_mpid, 4); mpid[4] = 0;
@@ -112,29 +98,6 @@ size_type Message::getRemSize()const{
     return remSize;
 }
 
-size_type Message::getCancSize()const{
-    return cancSize;
-}
-
-size_type Message::getExecSize()const{
-    return execSize;
-}
-
-id_type Message::getOldId()const{
-    return oldId;
-}
-
-price_type Message::getOldPrice()const{
-    return oldPrice;
-}
-
-size_type Message::getOldSize()const{
-    return oldSize;
-}
-
-const char * Message::getMPID()const{
-    return mpid;
-}
 
 std::string Message::getTicker() const {
     return ticker;
@@ -145,64 +108,6 @@ bool Message::isEmpty()const{
     return (id==ID_DEFAULT);
 }
 
-std::string Message::getString(void)const{
-    std::ostringstream string_builder;
-    if(!isEmpty()){
-        string_builder  << timestamp << ",";
-    }
-    else{
-        string_builder  << ",";
-    }
-
-    if(!isEmpty()){
-        string_builder  << type  << ","
-                        << id << ","
-                        << side << ",";
-    }
-    else{
-        string_builder  << ","
-                        << ","
-                        << ",";
-    }
-    if(remSize!=SIZE_DEFAULT){
-        string_builder << remSize;
-    }
-    string_builder << ",";
-
-    if(price!=PRICE_DEFAULT){
-        string_builder << price;
-    }
-    string_builder << ",";
-
-    if(cancSize!=SIZE_DEFAULT){
-        string_builder << cancSize;
-    }
-    string_builder << ",";
-
-    if(execSize!=SIZE_DEFAULT){
-        string_builder << execSize;
-    }
-    string_builder << ",";
-
-    if(oldId!=ID_DEFAULT){
-        string_builder << oldId;
-    }
-    string_builder << ",";
-
-    if(oldSize!=SIZE_DEFAULT){
-        string_builder << oldSize;
-    }
-    string_builder << ",";
-
-    if(oldPrice!=PRICE_DEFAULT){
-        string_builder << oldPrice;
-    }
-    string_builder << ",";
-    string_builder << mpid;
-    string_builder << std::endl;
-
-    return string_builder.str();
-}
 
 void Message::print() const {
     std::cout << "Message type   :" << type <<std::endl;

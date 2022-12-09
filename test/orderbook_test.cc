@@ -68,11 +68,11 @@ TEST(OrderBook, MatchLimitOrdersBasic) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell1));
   
   //sell1 should have matched with buy1 - hence sell1 should be deleted from order book
-  auto sell_order_obj = book.get_order(s,3);
+  auto sell_order_obj = book.get_order(3);
   EXPECT_FALSE(sell_order_obj);
 
   //buy1 should be partially filled with 5 qty still remaining
-  auto buy_order_obj = book.get_order(s,1);
+  auto buy_order_obj = book.get_order(1);
   EXPECT_FALSE(!buy_order_obj);
   auto order = *buy_order_obj; 
   EXPECT_EQ(buy1.get_id(), order.get_id());
@@ -147,7 +147,7 @@ TEST(OrderBook, MatchLimitOrdersAcrossLevels) {
   //sell2 should have matched with buy2
 
   //buy2 should be partially filled with 10 qty still remaining
-  auto sell_order_obj = book.get_order(s,4);
+  auto sell_order_obj = book.get_order(4);
   EXPECT_FALSE(!sell_order_obj);
   Order order = *sell_order_obj; 
   EXPECT_EQ(sell2.get_id(), order.get_id());
@@ -176,7 +176,7 @@ TEST(OrderBook, MatchMarketOrders) {
   EXPECT_EQ(StatusCode::OK, best_bid.first);
   EXPECT_EQ(1000, best_bid.second);
 
-  auto buy_order_obj = book.get_order(s,3);
+  auto buy_order_obj = book.get_order(3);
   EXPECT_FALSE(!buy_order_obj);
   Order order = *buy_order_obj; 
   EXPECT_EQ(buy3.get_id(), order.get_id());
@@ -198,7 +198,7 @@ TEST(OrderBook, AddStopOrder) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, stop_sell1));
   
   //stop order won't be executed yet, verify that
-  auto sell_order_obj = book.get_order(s,9);
+  auto sell_order_obj = book.get_order(9);
   EXPECT_FALSE(!sell_order_obj);
   Order order = *sell_order_obj; 
   EXPECT_EQ(OrderType::STOP_LIMIT, order.get_type());
@@ -210,7 +210,7 @@ TEST(OrderBook, AddStopOrder) {
 
   // book.printBuySellPool(s);
   //buy1 and sell1 matched - stop order won't be executed yet
-  sell_order_obj = book.get_order(s,9);
+  sell_order_obj = book.get_order(9);
   EXPECT_FALSE(!sell_order_obj);
   order = *sell_order_obj; 
   EXPECT_EQ(OrderType::STOP_LIMIT, order.get_type());
@@ -219,7 +219,7 @@ TEST(OrderBook, AddStopOrder) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell2));
   // book.printBuySellPool(s);
   //buy2 and sell2 matched - stop limit order will be converted to limit order now
-  sell_order_obj = book.get_order(s,9);
+  sell_order_obj = book.get_order(9);
   EXPECT_FALSE(!sell_order_obj);
   order = *sell_order_obj; 
   EXPECT_EQ(OrderType::LIMIT, order.get_type());
@@ -241,10 +241,10 @@ TEST(OrderBook, DeleteLimitOrder) {
   EXPECT_EQ(StatusCode::OK, book.delete_order(3));
   
   //order should be deleted
-  auto order_obj = book.get_order(s,1);
+  auto order_obj = book.get_order(1);
   EXPECT_FALSE(order_obj);
 
-  order_obj = book.get_order(s,3);
+  order_obj = book.get_order(3);
   EXPECT_FALSE(order_obj);
 }
 
@@ -263,10 +263,10 @@ TEST(OrderBook, DeleteStopOrder) {
   EXPECT_EQ(StatusCode::OK, book.delete_order(3));
   
   //order should be deleted
-  auto order_obj = book.get_order(s,1);
+  auto order_obj = book.get_order(1);
   EXPECT_FALSE(order_obj);
 
-  order_obj = book.get_order(s,3);
+  order_obj = book.get_order(3);
   EXPECT_FALSE(order_obj);
 }
 
@@ -275,3 +275,4 @@ TEST(OrderBook, DeleteOrderNotExists) {
   std::string s = "APPLE";
   EXPECT_EQ(StatusCode::ORDER_NOT_EXISTS, book.delete_order(1));
 }
+

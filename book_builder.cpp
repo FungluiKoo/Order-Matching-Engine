@@ -33,17 +33,11 @@ void BookBuilder::next(){
     if(!message.isEmpty()){
         bool validMessage = updateMessage();
         if(validMessage){
-           updateBook();
-//            WriteBookAndMessage();
+            updateBook();
         }
     }
 }
 
-
-void BookBuilder::WriteBookAndMessage() {
-        std::cout << message.getString() << std::endl;
-//    messageWriter.writeLine(message.getString());
-}
 
 
 bool BookBuilder::updateMessage() {
@@ -58,15 +52,10 @@ bool BookBuilder::updateMessage() {
 }
 
 void BookBuilder::updateBook() {
-//    std::cout << "====" << message.getType() << "=====" << std::endl;
-
     char typeMsg = message.getType();
 
     if (typeMsg == 'A')
     {
-//        std::cout << "====" << message.getTicker() << "=====" << std:):endl;
-//        std::cout << "====" << message.getTicker() << "=====" << std::endl
-
         // if the ticket is in the selected array
         if (in_array(message.getTicker(), SymbolFilters))
         {
@@ -83,7 +72,6 @@ void BookBuilder::updateBook() {
 //            message.print();
             totalAdd += 1;
         }
-//        book.modifySize(message.getPrice(), message.getRemSize(), message.getSide());
     }
     else if(typeMsg == 'D')
     {
@@ -91,13 +79,10 @@ void BookBuilder::updateBook() {
         // StatusCode s = centralBook.delete_order(message.getId());
         auto s = a.get();
         if (s == StatusCode :: OK) {
-//            std::cout << "Delete Order successfully" << std::endl;
-//            message.print();
             totalDelete += 1;
 
         }
-        // Cancel order. Totally or partially.
-        // book.modifySize(message.getPrice(),-message.getCancSize(),message.getSide());
+
     }
     else
     {

@@ -21,7 +21,6 @@ private:
             { "AAPL", "MSFT", "TSLA", "AMZN"};
     int totalAdd = 0;
     int totalDelete = 0;
-    int totalMatch = 0;
 
 public:
     BookBuilder(const std::string &inputMessagePath,
@@ -37,10 +36,6 @@ public:
     bool updateMessage();
 
     void updateBook();
-
-//    void updatePool();
-
-    void WriteBookAndMessage();
 
     bool in_array(const std::string &value, const std::vector<std::string> &array)
     {

@@ -70,7 +70,7 @@ class OrderBook{
         void set_last_matching_price(Order& order, unsigned price);
 
     public:
-        OrderBook(std::string company = "MUDD") :
+        OrderBook(std::string company = "default") :
             company(company),
             ostrm(company, std::ios_base::app)
             {

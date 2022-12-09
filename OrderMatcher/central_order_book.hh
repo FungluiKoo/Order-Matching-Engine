@@ -21,7 +21,7 @@ public:
         
         StatusCode delete_order(unsigned int);
 
-        std::optional<Order> get_order(std::string, unsigned int);
+        std::optional<Order> get_order(unsigned int);
 
         std::pair<StatusCode, unsigned> best_ask(std::string) const;
 

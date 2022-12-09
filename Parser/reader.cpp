@@ -227,17 +227,7 @@ bool Reader::isValid() const{
     return validFile;
 }
 
-std::string Reader::getFileName() const{
-    return fileName;
-}
 
-std::string Reader::getStock() const{
-    return stock;
-}
-
-void Reader::setMessage(const char* str){
-    memcpy(message, str, 64);
-}
 
 Reader::~Reader(){
     if (file.is_open()){

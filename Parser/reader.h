@@ -14,7 +14,6 @@ class Reader{
 private:
     std::string fileName;
     std::ifstream file;
-//     std::string messageToFilter = "AFEXDU"; // QC
     std::string stock;
     unsigned count = 0;
     char message[64];
@@ -33,10 +32,7 @@ public:
     void printProgress();
     virtual void readBytesIntoMessage(const long &);
     virtual void skipBytes(const long &);
-    void setMessage(const char*);
     virtual char getKey();
-    std::string getFileName() const;
-    std::string getStock() const;
 };
 
 

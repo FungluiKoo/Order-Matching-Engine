@@ -50,10 +50,6 @@ public:
     void setPrice(const price_type &);
     void setRemSize(const size_type &);
     void setCancSize(const size_type &);
-    void setExecSize(const size_type &);
-    void setOldId(const id_type &id);
-    void setOldPrice(const price_type &);
-    void setOldSize(const size_type &);
     void setMPID(const char &);
     void setTicker(const std::string &);
 
@@ -63,26 +59,11 @@ public:
     side_type getSide() const;
     price_type getPrice() const;
     size_type getRemSize() const;
-    size_type getCancSize() const;
-    size_type getExecSize() const;
-    id_type getOldId() const;
-    price_type getOldPrice() const;
-    size_type getOldSize() const;
-    const char *getMPID() const;
     std::string getTicker() const;
 
 
     bool isEmpty() const;
 
-    /**
-     * Get string representation for writing into the csv
-     *
-     * @return string representation of message.
-     *          If field is not being setted it is just an empty char
-     *          separated by commas.
-     *
-     */
-    std::string getString() const;
     void print() const;
 };
 
