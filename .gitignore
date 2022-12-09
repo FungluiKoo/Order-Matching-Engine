@@ -2,4 +2,6 @@
 *.exe*
 *.json
 *.o
+*.out
 build/
+itch/

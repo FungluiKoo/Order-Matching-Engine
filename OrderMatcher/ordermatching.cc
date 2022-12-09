@@ -11,13 +11,13 @@ void OrderBook::match_order(Order& order){ // assume limit order
         auto quote = order.get_quote();
         auto iter = isbuy ? sellprices.begin() : buyprices.begin();
         auto iterend = isbuy ? std::upper_bound(sellprices.begin(), sellprices.end(), quote) : std::upper_bound(buyprices.begin(), buyprices.end(), quote, std::greater<unsigned>());
-        for(; qty<fulfillment && iter!=iterend; ++iter){
+        for(; fulfillment<qty && iter!=iterend; ++iter){
             auto &nowlist = isbuy ? sellpool[*iter] : buypool[*iter];
             for(auto &noworder : nowlist){
                 fulfillment += noworder.get_quantity();
             }
         }
-        if(qty < fulfillment){return;}
+        if(fulfillment<qty){return;}
     }
     while(!(isbuy ? sellprices.empty() : buyprices.empty())){
         auto level = isbuy ? best_ask() : best_bid();

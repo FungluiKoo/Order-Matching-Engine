@@ -74,10 +74,57 @@ TEST(OrderBook, MatchLimitOrdersBasic) {
   //buy1 should be partially filled with 5 qty still remaining
   auto buy_order_obj = book.get_order(s,1);
   EXPECT_FALSE(!buy_order_obj);
-  Order order = *buy_order_obj; 
+  auto order = *buy_order_obj; 
   EXPECT_EQ(buy1.get_id(), order.get_id());
   EXPECT_EQ(5, order.get_quantity());
 
+  // Fill the remaining 5 qty of buy1 with sell2
+  EXPECT_EQ(StatusCode::OK, book.add_order(s, sell2));
+  buy_order_obj = book.get_order(s,1);
+  EXPECT_FALSE(buy_order_obj);
+
+  // buy2 should be the same
+  buy_order_obj = book.get_order(s,2);
+  EXPECT_FALSE(!buy_order_obj);
+  order = *buy_order_obj;
+  EXPECT_EQ(5, order.get_quantity());
+}
+
+TEST(OrderBook, MatchLimitOrdersAON) {
+  CentralOrderBook book;
+  std::string s = "APPLE";
+  
+  EXPECT_EQ(StatusCode::OK, book.add_symbol(s));
+  Order buy1(1,2,1000,15,OrderSide::BUY,OrderType::LIMIT,0);
+  Order buy2(2,2,999,5,OrderSide::BUY,OrderType::LIMIT,0);
+  Order sell1(3,2,999,25,OrderSide::SELL,OrderType::LIMIT,1);
+  Order sell2(4,2,998,18,OrderSide::SELL,OrderType::LIMIT,0);
+
+  EXPECT_EQ(StatusCode::OK, book.add_order(s, buy1));
+  EXPECT_EQ(StatusCode::OK, book.add_order(s, buy2));
+  EXPECT_EQ(StatusCode::OK, book.add_order(s, sell1));
+  
+  //sell1 should have been killed - hence sell1 should be deleted from order book
+  auto sell_order_obj = book.get_order(s,3);
+  EXPECT_FALSE(sell_order_obj);
+
+  //buy1 should be still 15
+  auto buy_order_obj = book.get_order(s,1);
+  EXPECT_FALSE(!buy_order_obj);
+  Order order = *buy_order_obj; 
+  EXPECT_EQ(buy1.get_id(), order.get_id());
+  EXPECT_EQ(15, order.get_quantity());
+
+  // Fill the remaining 15 qty of buy1 with sell2
+  EXPECT_EQ(StatusCode::OK, book.add_order(s, sell2));
+  buy_order_obj = book.get_order(s,1);
+  EXPECT_FALSE(buy_order_obj);
+
+  // buy2 should have 2 remaining
+  buy_order_obj = book.get_order(s,2);
+  EXPECT_FALSE(!buy_order_obj);
+  order = *buy_order_obj;
+  EXPECT_EQ(2, order.get_quantity());
 }
 
 TEST(OrderBook, MatchLimitOrdersAcrossLevels) {
