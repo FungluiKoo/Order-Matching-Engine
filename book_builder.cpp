@@ -1,3 +1,6 @@
+#include <future>
+#include <thread>
+
 #include "book_builder.h"
 
 
@@ -71,7 +74,8 @@ void BookBuilder::updateBook() {
             Order thisOrder(message.getId(),0,
                             static_cast<unsigned int>(message.getPrice()),message.getRemSize(),
                             side ,type,0);
-            centralBook.add_order(message.getTicker(), thisOrder);
+            std::jthread jt(&CentralOrderBook::add_order, &centralBook, message.getTicker(), std::ref(thisOrder));
+            // centralBook.add_order(message.getTicker(), thisOrder);
             std::cout << "Add Order successfully" << std::endl;
 
 //            centralBook.printBuySellPool(message.getTicker());
@@ -81,7 +85,9 @@ void BookBuilder::updateBook() {
     }
     else if(typeMsg == 'D')
     {
-        StatusCode s = centralBook.delete_order(message.getId());
+        auto a = std::async(&CentralOrderBook::delete_order, &centralBook, message.getId());
+        // StatusCode s = centralBook.delete_order(message.getId());
+        auto s = a.get();
         if (s == StatusCode :: OK) {
             std::cout << "Delete Order successfully" << std::endl;
 //            message.print();
