@@ -191,9 +191,11 @@ void OrderBook::delete_order(unsigned order_id, unsigned price, std::set<unsigne
     Add an order to the order book.
 */
 StatusCode OrderBook::add_order(Order& order){
+    booksem.acquire();
    // std::cout << "In add order \n" << order;
     unsigned order_id = order.get_id();
     if(order_map.count(order_id) != 0){
+        booksem.release();
         return StatusCode :: ORDER_EXISTS;
     }
     StatusCode status = StatusCode :: OK;
@@ -218,6 +220,7 @@ StatusCode OrderBook::add_order(Order& order){
     } else{
         status = add_stop_order(order,true);
     }
+    booksem.release();
     return status; 
 }
 
@@ -248,9 +251,11 @@ std::optional<Order> OrderBook::get_order(unsigned int order_id){
 /*
     Delete an order with id 'order_id'
 */
-StatusCode OrderBook::delete_order(unsigned int order_id){
+StatusCode OrderBook::del_order(unsigned int order_id){
+    booksem.acquire();
     auto order_details = get_order_info(order_id);
     if (!order_details){
+        booksem.release();
         return StatusCode :: ORDER_NOT_EXISTS;
     }
     auto order_info = *order_details;
@@ -278,6 +283,7 @@ StatusCode OrderBook::delete_order(unsigned int order_id){
             //sellsem.release();
         }
     }
+    booksem.release();
     return StatusCode :: OK;  
 }
 

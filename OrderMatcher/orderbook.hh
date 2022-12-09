@@ -38,7 +38,7 @@ class OrderBook{
         std::string company; // also the filename for output
         std::ofstream ostrm;
 
-        std::binary_semaphore booksem{0};
+        std::binary_semaphore booksem{1};
         // key=price level; value=a list of Order
         std::unordered_map<unsigned, std::list<Order>> buypool, sellpool, stop_buy_pool, stop_sell_pool; 
         // stores current levels of the hashmaps (sellpool and stop_buy_pool)
@@ -69,23 +69,32 @@ class OrderBook{
         
         void set_last_matching_price(Order& order, unsigned price);
 
-    public:
-        OrderBook(std::string company = "default") :
-            company(company),
-            ostrm(company, std::ios_base::app)
-            {
-                booksem.release();
-            }
-        void lock(){booksem.acquire();}
-        void unlock(){booksem.release();}
-        StatusCode add_order(Order&);
-        std::optional<Order> get_order(unsigned int);
-        StatusCode delete_order(unsigned int);
         unsigned best_ask()const{
             return sellprices.empty() ? std::numeric_limits<unsigned>::max() : *(sellprices.begin()); 
         }
         unsigned best_bid()const{
             return buyprices.empty() ? 0 : *(buyprices.begin());
+        }
+        std::optional<Order> get_order(unsigned int);
+    public:
+        OrderBook(std::string company = "DEFAULT") :
+            company(company),
+            ostrm("./result/"+company+".txt", std::ios_base::app)
+            {std::cout << "OrderBook created for " << company << std::endl;}
+        StatusCode add_order(Order&);
+        StatusCode del_order(unsigned int);
+        
+        unsigned best_ask_price(){
+            booksem.acquire();
+            auto result = sellprices.empty() ? std::numeric_limits<unsigned>::max() : *(sellprices.begin()); 
+            booksem.release();
+            return result;
+        }
+        unsigned best_bid_price(){
+            booksem.acquire();
+            auto result = buyprices.empty() ? 0 : *(buyprices.begin());
+            booksem.release();
+            return result;
         }
         void printBuySellPool()const;
 };

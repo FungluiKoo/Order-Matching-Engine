@@ -80,11 +80,11 @@ TEST(OrderBook, MatchLimitOrdersBasic) {
 
   // Fill the remaining 5 qty of buy1 with sell2
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell2));
-  buy_order_obj = book.get_order(s,1);
+  buy_order_obj = book.get_order(1);
   EXPECT_FALSE(buy_order_obj);
 
   // buy2 should be the same
-  buy_order_obj = book.get_order(s,2);
+  buy_order_obj = book.get_order(2);
   EXPECT_FALSE(!buy_order_obj);
   order = *buy_order_obj;
   EXPECT_EQ(5, order.get_quantity());
@@ -105,11 +105,11 @@ TEST(OrderBook, MatchLimitOrdersAON) {
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell1));
   
   //sell1 should have been killed - hence sell1 should be deleted from order book
-  auto sell_order_obj = book.get_order(s,3);
+  auto sell_order_obj = book.get_order(3);
   EXPECT_FALSE(sell_order_obj);
 
   //buy1 should be still 15
-  auto buy_order_obj = book.get_order(s,1);
+  auto buy_order_obj = book.get_order(1);
   EXPECT_FALSE(!buy_order_obj);
   Order order = *buy_order_obj; 
   EXPECT_EQ(buy1.get_id(), order.get_id());
@@ -117,11 +117,11 @@ TEST(OrderBook, MatchLimitOrdersAON) {
 
   // Fill the remaining 15 qty of buy1 with sell2
   EXPECT_EQ(StatusCode::OK, book.add_order(s, sell2));
-  buy_order_obj = book.get_order(s,1);
+  buy_order_obj = book.get_order(1);
   EXPECT_FALSE(buy_order_obj);
 
   // buy2 should have 2 remaining
-  buy_order_obj = book.get_order(s,2);
+  buy_order_obj = book.get_order(2);
   EXPECT_FALSE(!buy_order_obj);
   order = *buy_order_obj;
   EXPECT_EQ(2, order.get_quantity());

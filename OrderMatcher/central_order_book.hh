@@ -7,25 +7,19 @@
     stocks. It provides operations on the order book.
 */
 class CentralOrderBook {
-    private:
-        // map of stock symbol to its order book
-        std::unordered_map<std::string, std::unique_ptr<OrderBook>> order_book_map;
-        // store a hash map of orderID to symbols
-        std::unordered_map<unsigned int, std::string> order_ticket_map;
+private:
+    // map of stock symbol to its order book
+    std::unordered_map<std::string, std::unique_ptr<OrderBook>> order_book_map;
+    // store a hash map of orderID to symbols
+    std::unordered_map<unsigned int, std::string> order_ticket_map;
+    
+    StatusCode add_symbol(std::string);
+    // std::optional<Order> get_order(unsigned int);
+    std::pair<StatusCode, unsigned> best_ask(std::string) const;
+    std::pair<StatusCode, unsigned> best_bid(std::string) const;
+    
 public:
-        
-    public:
-        StatusCode add_symbol(std::string);
-        
-        StatusCode add_order(std::string, Order&);
-        
-        StatusCode delete_order(unsigned int);
-
-        std::optional<Order> get_order(unsigned int);
-
-        std::pair<StatusCode, unsigned> best_ask(std::string) const;
-
-        std::pair<StatusCode, unsigned> best_bid(std::string) const;
-
-        void printBuySellPool(std::string) const;
+    void add_order(std::string, Order&);
+    void delete_order(unsigned int);
+    void printBuySellPool(std::string) const;
 };

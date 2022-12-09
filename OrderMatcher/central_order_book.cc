@@ -1,3 +1,5 @@
+#include <thread>
+
 #include "central_order_book.hh"
 
 /*
@@ -17,7 +19,7 @@ StatusCode CentralOrderBook::add_symbol(std::string symbol){
 /*
     Adds an order of a particular symbol to the order book. 
 */
-StatusCode CentralOrderBook::add_order(std::string symbol, Order& order){
+void CentralOrderBook::add_order(std::string symbol, Order& order){
     StatusCode status;
     // if not found then create an orderbook
     if(order_book_map.count(symbol)==0){
@@ -27,34 +29,34 @@ StatusCode CentralOrderBook::add_order(std::string symbol, Order& order){
     }
     // auto order_book_ptr = order_book_map.find(symbol);
     // std::cout << "symbol available";
-    order_book_map[symbol]->lock();
-    status = order_book_map[symbol]->add_order(order);
-    order_book_map[symbol]->unlock();
+    std::jthread jt(&OrderBook::add_order, order_book_map[symbol].get(), std::ref(order));
+    jt.detach();
+    // status = order_book_map[symbol]->add_order(order);
     
-    if (status == StatusCode::OK)
-    {
-        order_ticket_map[order.get_id()] = symbol;
-    }
-    return status;
+    // if (status == StatusCode::OK)
+    // {
+    order_ticket_map[order.get_id()] = symbol;
+    // }
+    // return status;
 }
 
 /*
     Fetch an order of a particular symbol and order ID from the order book. 
 */
-std::optional<Order> CentralOrderBook::get_order(unsigned int order_id){
-    auto order_ticket_ptr = order_ticket_map.find(order_id);
-    if (order_ticket_ptr == order_ticket_map.end()){
-        return {};
-    }
-    std::string symbol = order_ticket_ptr->second;
-    auto order_book_ptr = order_book_map.find(symbol);
-    return (order_book_ptr->second)->get_order(order_id);
-}
+// std::optional<Order> CentralOrderBook::get_order(unsigned int order_id){
+//     auto order_ticket_ptr = order_ticket_map.find(order_id);
+//     if (order_ticket_ptr == order_ticket_map.end()){
+//         return {};
+//     }
+//     std::string symbol = order_ticket_ptr->second;
+//     auto order_book_ptr = order_book_map.find(symbol);
+//     return (order_book_ptr->second)->get_order(order_id);
+// }
 
 /*
     Delete an order of an order ID from the order book.
 */
-StatusCode CentralOrderBook::delete_order(unsigned int order_id){
+void CentralOrderBook::delete_order(unsigned int order_id){
     StatusCode status;
     // first check the order ticket map
     auto order_ticket_ptr = order_ticket_map.find(order_id);
@@ -65,17 +67,19 @@ StatusCode CentralOrderBook::delete_order(unsigned int order_id){
         std::string sym = order_ticket_ptr->second;
         // then go to the order book
         auto order_book_ptr = order_book_map.find(sym);
-        (order_book_ptr->second)->lock();
+        
         // if (order_book_ptr == order_book_map.end()){
         //     status = StatusCode :: SYMBOL_NOT_EXISTS;
         // } else{
-        status = (order_book_ptr->second)->delete_order(order_id);
-        (order_book_ptr->second)->unlock();
+        std::jthread jt(&OrderBook::del_order, order_book_ptr->second.get(), order_id);
+        jt.detach();
+        // status = (order_book_ptr->second)->delete_order(order_id);
+        
 //            status = StatusCode :: OK;
         // }
         order_ticket_map.erase(order_id);
     }
-    return status;
+    // return status;
 }
 
 /*
@@ -88,7 +92,7 @@ std::pair<StatusCode, unsigned> CentralOrderBook::best_ask(std::string symbol) c
     if (order_book_ptr == order_book_map.end()){
         status = StatusCode :: SYMBOL_NOT_EXISTS;
     } else{
-        price = order_book_ptr->second->best_ask();
+        price = order_book_ptr->second->best_ask_price();
         status = StatusCode :: OK;
     }
     return std::make_pair(status, price);
@@ -104,7 +108,7 @@ std::pair<StatusCode, unsigned> CentralOrderBook::best_bid(std::string symbol) c
     if (order_book_ptr == order_book_map.end()){
         status = StatusCode :: SYMBOL_NOT_EXISTS;
     } else{
-        price = order_book_ptr->second->best_bid();
+        price = order_book_ptr->second->best_bid_price();
         status = StatusCode :: OK;
     }
     return std::make_pair(status, price);
