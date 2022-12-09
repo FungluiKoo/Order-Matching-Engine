@@ -3,11 +3,7 @@
 *.json
 *.o
 *.out
+*.txt
 build/
 data/
-AAPL
-AMZN
-MSFT
-MUDD
-TSLA
-log.txt
+result/
